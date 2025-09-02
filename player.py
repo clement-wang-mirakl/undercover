@@ -12,6 +12,7 @@
 
 import numpy as np
 from sknetwork.data import load_netset
+from create_embeddings import create_or_load_embeddings
 
 data = load_netset("swow")
 adjacency = data.adjacency  # graph (if needed)
@@ -19,10 +20,7 @@ words = [str(word) for word in data.names]  # words
 
 # Functions to complete; your code must run fast (less than 100ms on a laptop)
 
-
-def get_embeddings(words):
-    pass
-
+table = create_or_load_embeddings(words, model_name="all-MiniLM-L6-v2", batch_size=128)
 
 def speak(
     n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()
