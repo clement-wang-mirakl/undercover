@@ -3,7 +3,7 @@
 
 # Uncover game
 
-# Compared to the standard game: 
+# Compared to the standard game:
 # 1. The list of words is constrained.
 # 2. The order of players is random at each round.
 # 3. The votes are secret.
@@ -13,18 +13,25 @@
 import numpy as np
 from sknetwork.data import load_netset
 
-data = load_netset('swow')
+data = load_netset("swow")
 adjacency = data.adjacency  # graph (if needed)
 words = [str(word) for word in data.names]  # words
 
 # Functions to complete; your code must run fast (less than 100ms on a laptop)
 
-def speak(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> str:
+
+def get_embeddings(words):
+    pass
+
+
+def speak(
+    n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()
+) -> str:
     """
     Give a word to other players.
     The word must belong to the list of available words.
     It cannot be the secret word, nor a word that has already been given.
-    
+
     Parameters
     ----------
     n_players: int
@@ -40,23 +47,25 @@ def speak(n_players, player, secret_word="", list_words=[], list_players=[], rol
     roles: dict
         Known roles.
         Key = player, Value = role ("C" for Civilian, "U" for Undercover, "W" for Mr White).
-        
+
     Examples
     --------
     > speak(5, 4, "cat", ["milk"], [3])
     > "lion"
-    
+
     > speak(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5], {2: "U"})
     > "sleep"
     """
     return None
 
 
-def vote(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> int:
+def vote(
+    n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()
+) -> int:
     """
     Vote for a player to eliminate at the end of a round.
     The returned player index cannot be yours, nor a player that has already been eliminated (role known).
-    
+
     Parameters
     ----------
     n_players: int
@@ -72,7 +81,7 @@ def vote(n_players, player, secret_word="", list_words=[], list_players=[], role
     roles: dict
         Known roles.
         Key = player, Value = role ("C" for Civilian, "U" for Undercover, "W" for Mr White).
-        
+
     Example
     -------
     > vote(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5])
@@ -85,7 +94,7 @@ def guess(n_players, player, list_words=[], list_players=[], roles=dict()) -> st
     """
     You are Mr White and you have just been eliminated.
     Guess the secret word of Civilians.
-    
+
     Parameters
     ----------
     n_players: int
@@ -99,7 +108,7 @@ def guess(n_players, player, list_words=[], list_players=[], roles=dict()) -> st
     roles: dict
         Known roles (including yours as Mr White).
         Key = player, Value = role ("C" for Civilian, "U" for Undercover, "W" for Mr White).
-        
+
     Example
     -------
     > guess(5, 1, ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5])
