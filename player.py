@@ -56,7 +56,21 @@ def speak(
     > speak(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5], {2: "U"})
     > "sleep"
     """
-    return None
+    if len(secret_words):
+        return speak_adjacency(n_players, player, secret_word, list_words, list_players, roles)
+    else:
+        return None
+
+def speak_adjacency(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> str:
+    pdb.set_trace()
+    # find words adjacent to secret_word, enough to have a new word
+
+
+def compute_distance(main_word, other_words):
+    d = np.expand_dims(table[main_word], axis=0) - np.concatenate([table[w] for w in other_words], axis=0)
+    d = np.linalg.norm(d, axis=1)
+    return d
+
 
 
 def vote(
@@ -87,8 +101,21 @@ def vote(
     > vote(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5])
     > 2
     """
-    return None
+    if len(secret_word):
+        return vote_nonwhite(n_players, player, secret_word, list_words, list_players, roles)
+    else:
+        return vote_white(n_players, player, list_words, list_players, roles)
 
+def vote_nonwhite(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> int:
+    distances = compute_distance(secret_word, list_words)
+    closest = np.argmin(distances, axis=0).int()
+    return list_players[closest]
+
+def vote_white(n_players, player, list_words=[], list_players=[], roles=dict()) -> int:
+    votei = 0
+    while list_players[votei]==player:
+        votei+=1
+    return list_players[votei]
 
 def guess(n_players, player, list_words=[], list_players=[], roles=dict()) -> str:
     """
