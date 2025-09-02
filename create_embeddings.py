@@ -1,7 +1,6 @@
 import os
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from sknetwork.data import load_netset
 from tqdm import tqdm
 
@@ -15,6 +14,8 @@ EMBEDDING_FILE = "embeddings.npy"
 
 
 def create_or_load_embeddings(words, model_name="all-MiniLM-L6-v2", batch_size=128):
+    from sentence_transformers import SentenceTransformer
+
     if os.path.exists(EMBEDDING_FILE):
         print(f"Embeddings already exist, loading from {EMBEDDING_FILE}")
         embeddings = np.load(EMBEDDING_FILE)
