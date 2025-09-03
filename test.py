@@ -52,8 +52,9 @@ def test_player(roles, rounds):
                 word = speak(*arguments)
                 t1 = time.time()
                 
-            except: 
+            except Exception as e: 
                 print(f"Error on speak...\n Arguments = {arguments}")
+                print(e)
             if word not in words:
                 print(f"Error on speak...\n Incorrect word {word}\n Arguments = {arguments}")
             if t1 - t0 > 0.1:

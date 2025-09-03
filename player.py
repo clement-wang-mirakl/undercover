@@ -13,6 +13,7 @@
 import numpy as np
 from sknetwork.data import load_netset
 from create_embeddings import create_or_load_embeddings
+import pdb
 
 data = load_netset("swow")
 adjacency = data.adjacency  # graph (if needed)
@@ -54,10 +55,13 @@ def speak(
     > speak(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5], {2: "U"})
     > "sleep"
     """
-    if len(secret_words):
+    if len(secret_word):
         return speak_adjacency(n_players, player, secret_word, list_words, list_players, roles)
     else:
-        return None
+        return speak_random(words, n_players*player % len(words))
+
+def speak_random(words, seed):
+    return words[seed]
 
 def speak_adjacency(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> str:
     pdb.set_trace()
