@@ -72,11 +72,10 @@ def speak(
     > speak(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5], {2: "U"})
     > "sleep"
     """
+
+    if (not len(secret_word)) and (len(list_words) == 0):
+        return words[np.random.randint(0, len(words))]
     return speak_early(n_players, player, secret_word, list_words, list_players, roles)
-
-
-def speak_random(words, seed):
-    return words[seed]
 
 
 def speak_early(
@@ -143,8 +142,9 @@ def vote_nonwhite(
     n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()
 ) -> int:
     turn = get_turn(roles)
-    current_words = list_words[: n_players - turn]
-    current_players = list_players[: n_players - turn]
+    current_words = list_words[-(n_players - turn) :]
+    current_players = list_players[-(n_players - turn) :]
+    self_index = current_players.index(player)
 
     if secret_word in current_words:
         player_who_said_secret_word = current_players[current_words.index(secret_word)]
@@ -152,9 +152,12 @@ def vote_nonwhite(
 
     current_words_embeddings = convert_word_list_to_embeddings(current_words)
     secret_word_embedding = convert_word_list_to_embeddings([secret_word])
-    distances = cosine_distance(secret_word_embedding, current_words_embeddings)
+    distances = cosine_distance(secret_word_embedding, current_words_embeddings)[0]
 
-    farthest_player = np.argmax(distances, axis=0).int()
+    distances[self_index] = -float("inf")
+
+    farthest_player = np.argmax(distances, axis=0)
+
     return current_players[farthest_player]
 
 
