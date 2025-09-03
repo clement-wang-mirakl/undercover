@@ -72,30 +72,34 @@ def speak(
     > speak(5, 4, "cat", ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5], {2: "U"})
     > "sleep"
     """
-    if len(secret_word):
-        return speak_adjacency(
-            n_players, player, secret_word, list_words, list_players, roles
-        )
-    else:
-        return speak_random(words, n_players * player % len(words))
+    return speak_early(n_players, player, secret_word, list_words, list_players, roles)
 
 
 def speak_random(words, seed):
     return words[seed]
 
 
-def speak_adjacency(
+def speak_early(
     n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()
 ) -> str:
-    pdb.set_trace()
-    # find words adjacent to secret_word, enough to have a new word
+    # randomly pick a word close to own word which has not been said before
+    main_word = secret_word if len(secret_word) else list_words[-1]
+    d = compute_distance(table[word_to_index[main_word]], table)
+    forbidden_words = list_words
+    if len(secret_word):
+        forbidden_words.append(secret_word)
+    indices = [word_to_index[x] for x in forbidden_words]
+    d[indices] = float("inf")
+    closest = np.argmin(d, axis=0)
+    return words[closest]
+
+
+def create_select_table(word_list):
+    return np.stack([table[ii] for ii, _ in enumerate(word_list)], axis=0)
 
 
 def compute_distance(main_word, other_words):
-    d = np.expand_dims(table[main_word], axis=0) - np.concatenate(
-        [table[w] for w in other_words], axis=0
-    )
-    d = np.linalg.norm(d, axis=1)
+    d = -np.dot(other_words, main_word)
     return d
 
 
