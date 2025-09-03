@@ -67,16 +67,15 @@ def speak_early(n_players, player, secret_word="", list_words=[], list_players=[
     # randomly pick a word close to own word which has not been said before
     assert len(secret_word)
     d = compute_distance(table[words.index(secret_word)], table)
-    mask = np.array([w in list_words+[secret_word]])
+    mask = np.array([w in list_words+[secret_word] for w in words])
     d[mask] = float('inf')
-    closest = np.argmin(distances, axis=0).int()
+    closest = np.argmin(d, axis=0)
     return words[closest]
 
 def create_select_table(word_list):
     return np.stack([table[ii] for ii,_ in enumerate(word_list)], axis=0)
 
 def compute_distance(main_word, other_words):
-    pdb.set_trace()
     d = np.expand_dims(main_word, axis=0) - other_words
     d = np.linalg.norm(d, axis=1)
     return d
@@ -115,9 +114,9 @@ def vote(
         return vote_white(n_players, player, list_words, list_players, roles)
 
 def vote_nonwhite(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> int:
-    # TODO correct argmin
+    pdb.set_trace()
     distances = compute_distance(table[words.index(secret_word)], create_select_table(list_words))
-    closest = np.argmin(distances, axis=0).int()
+    closest = np.argmax(distances, axis=0).int()
     return list_players[closest]
 
 def vote_white(n_players, player, list_words=[], list_players=[], roles=dict()) -> int:
