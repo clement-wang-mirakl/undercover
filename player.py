@@ -18,6 +18,7 @@ import pdb
 data = load_netset("swow")
 adjacency = data.adjacency  # graph (if needed)
 words = [str(word) for word in data.names]  # words
+word_to_index = {word: ii for ii, word in enumerate(words)} #[str(word) for word in data.names]  # words
 
 # Functions to complete; your code must run fast (less than 100ms on a laptop)
 
@@ -66,9 +67,9 @@ def speak_random(words, seed):
 def speak_early(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> str:
     # randomly pick a word close to own word which has not been said before
     assert len(secret_word)
-    d = compute_distance(table[words.index(secret_word)], table)
-    mask = np.array([w in list_words+[secret_word] for w in words])
-    d[mask] = float('inf')
+    d = compute_distance(table[word_to_index[secret_word]], table)
+    indices = [word_to_index[x] for x in list_words+[secret_word]]
+    d[indices] = float('inf')
     closest = np.argmin(d, axis=0)
     return words[closest]
 
@@ -76,8 +77,7 @@ def create_select_table(word_list):
     return np.stack([table[ii] for ii,_ in enumerate(word_list)], axis=0)
 
 def compute_distance(main_word, other_words):
-    d = np.expand_dims(main_word, axis=0) - other_words
-    d = np.linalg.norm(d, axis=1)
+    d = -np.dot(other_words, main_word)
     return d
 
 def vote(
@@ -115,7 +115,7 @@ def vote(
 
 def vote_nonwhite(n_players, player, secret_word="", list_words=[], list_players=[], roles=dict()) -> int:
     pdb.set_trace()
-    distances = compute_distance(table[words.index(secret_word)], create_select_table(list_words))
+    distances = compute_distance(table[word_to_index[secret_word]], create_select_table(list_words))
     closest = np.argmax(distances, axis=0).int()
     return list_players[closest]
 
