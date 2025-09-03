@@ -194,4 +194,27 @@ def guess(n_players, player, list_words=[], list_players=[], roles=dict()) -> st
     > guess(5, 1, ["milk", "lion", "house", "cheese", "friend"], [3, 4, 2, 1, 5])
     > "cat"
     """
-    return None
+
+    if "C" in roles.values():
+        target_words = [
+            w
+            for p, w in zip(list_players, list_words)
+            if p in roles and roles[p] == "C"
+        ]
+    else:
+        target_words = [
+            w
+            for p, w in zip(list_players, list_words)
+            if p != player and p not in roles
+        ]
+
+    # Pas ouf
+    emb = np.zeros((len(target_words), len(table[0])))
+    for i, w in enumerate(target_words):
+        emb[i] = table[word_to_index[w]]
+
+    d = compute_distance(emb.mean(axis=0), table)
+    indices = [word_to_index[x] for x in list_words]
+    d[indices] = float("inf")
+
+    return words[d.argmin()]
